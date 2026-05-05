@@ -1,47 +1,48 @@
 pipeline {
+
     agent any
-    
-    tools {
-        maven 'Maven'
-    }
-
+ 
     environment {
-        S3_BUCKET = "tom-cat-bucket"
-        WAR_FILE = "target/*.war"
-        EC2_IP = "13.60.57.99"
-        KEY = "testkey.pem"
-    }
 
+        AWS_DEFAULT_REGION = 'eu-central-1'
+
+        S3_BUCKET = 'testnallangi1234'
+
+        S3_FILE = 's3://testnallangi1234/test/Screenshot 2024-08-09 070625.png'
+
+        LOCAL_FILE = 'file.zip'
+
+    }
+ 
     stages {
 
-        stage('Clone Code') {
+        stage('Download from S3') {
+
             steps {
-                git branch: 'main', url: 'https://github.com/Shreya2733-raju/Sampleapp.git'
+
+                withCredentials([[
+
+                    $class: 'AmazonWebServicesCredentialsBinding',
+
+                    credentialsId: 'aws-credentials-id'
+
+                ]]) {
+
+                    bat '''
+
+                        aws s3 ls
+
+                        aws s3 cp s3://test1-bucket-samp/test1-bucket/ C:\\Users\\xxnallan
+
+                    '''
+
+                }
+
             }
+
         }
 
-        stage('Build WAR') {
-            steps {
-                bat 'mvn clean package'
-            }
-        }
-
-        stage('Upload to S3') {
-            steps {
-                bat 'aws s3 cp %WAR_FILE% s3://%S3_BUCKET%/'
-            }
-        }
-
-        stage('Deploy to EC2 Tomcat') {
-            steps {
-                bat '''
-                aws s3 cp s3://%S3_BUCKET%/app.war .
-
-                scp -i %KEY% app.war ubuntu@%EC2_IP%:/var/lib/tomcat10/webapps/
-
-                ssh -i %KEY% ubuntu@%EC2_IP% "sudo systemctl restart tomcat10"
-                '''
-            }
-        }
     }
+
 }
+ 
