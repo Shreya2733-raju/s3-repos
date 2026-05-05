@@ -32,7 +32,7 @@ pipeline {
 
                         aws s3 ls
 
-                        aws s3 cp s3://test1-bucket-samp/test1-bucket/ C:\\Users\\xxnallan
+                        aws s3 cp s3://test1-bucket-samp/test1-bucket/LinuxNotesForProfessionals.pdf C:\\Users\\xxnallan
 
                     '''
 
